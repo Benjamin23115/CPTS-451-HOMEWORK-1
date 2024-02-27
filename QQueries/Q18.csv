@@ -1,0 +1,9 @@
+FacFirstName,FacLastName,OfferNo,CourseNo,CrsDesc,avgStudentGPA,enrollmentCount
+Thomas,Fischer,527,CS442,"Computer Graphics",3.433333,3
+John,Miller,334,CS401,"Computers and Society",3.390000,3
+Carl,Hauser,100,CS111,"Introduction to Algorithmic Problem Solving",3.286667,3
+George,LaRue,222,CS260,"Introduction to Computer Architecture",3.266667,6
+Sandip,Roy,261,CS322,"Software Engineering Principles I",2.996667,3
+George,LaRue,424,CS430,"Numerical Analysis",2.910000,4
+Lawrence,Holder,179,CS122,"Data Structures",2.740000,3
+Lawrence,Holder,810,CS470,"Concepts in Biotechnology",2.716667,3

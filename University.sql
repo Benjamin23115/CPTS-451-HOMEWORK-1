@@ -90,9 +90,34 @@ WHERE
         AND offering.CourseNo LIKE '%IS%'; 
     
 -- Q13
-INSERT INTO faculty (FacNo, FacFirstName, FacLastName, FacCity, FacState, FacZipCode, FacRank, FacHireDate, FacSalary, FacSupervisor, FacDept) 
-VALUES
-    ("123456789", "Benjamin", "Farias Dela Mora", "Pasco", "WA", "99301", "JR", "2024-02-23", 70000, "Nicki Macon", "ACCT");
+INSERT INTO faculty (
+    FacNo,
+    FacFirstName,
+    FacLastName,
+    FacCity,
+    FacState,
+    FacZipCode,
+    FacRank,
+    FacHireDate,
+    FacSalary,
+    FacSupervisor,
+    FacDept
+) 
+VALUES (
+    "123456789",
+    "Benjamin",
+    "Farias Dela Mora",
+    "Pasco",
+    "WA",
+    "99301",
+    "JR",
+    "2024-02-23",
+    70000,
+    (SELECT FacNo FROM (SELECT * FROM faculty) AS temp WHERE FacFirstName = 'Nicki' AND FacLastName = 'Macon' AND FacNo = '765-43-2109'),
+    "ACCT"
+);
+
+
 
 -- Q14
 
