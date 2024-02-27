@@ -1,0 +1,60 @@
+/*--------------------------------------
+Washington State University: CptS451
+Spring 2024 Semester
+Student: Benjamin Farias Dela Mora
+Assignment: Homework 01
+SQL system: MySQL and Workbench
+Operating System: MS Windows 
+----------------------------------------*/
+use wsutc_cpts451_orderentry;
+
+
+/* Q1 */
+select
+    *
+from
+    ordertbl
+where
+    OrdDate >= '2021-01-01'
+    and OrdDate <= '2021-01-31'
+    and EmpNo is null;
+
+/* Q2 */
+select
+    OrdNo,
+    OrdDate,
+    CustNo,
+    OrdCity,
+    OrdState
+from
+    ordertbl
+where
+    OrdDate > '2021-01-23'
+    and OrdState = 'WA';
+
+/* Q3 */
+SELECT distinct
+    employee.EmpFirstName,
+    employee.EmpLastName,
+    employee.EmpNo,
+    employee.EmpPhone
+FROM
+    employee
+    JOIN ordertbl ON employee.EmpNo = ordertbl.EmpNo
+    JOIN customer ON customer.CustNo = ordertbl.CustNo
+WHERE
+    customer.CustBal > 300;
+
+/* Q4 */
+SELECT
+    avg(CustBal) AS avgCustBal,
+    CustCity,
+    LEFT (CustZip, 5) AS shortCustZip,
+    CustState
+FROM
+    customer
+WHERE
+    CustState = 'WA'
+GROUP BY
+    shortCustZip,
+    CustCity;

@@ -1,0 +1,4 @@
+OrdNo,OrdDate,CustNo,EmpNo,OrdName,OrdStreet,OrdCity,OrdState,OrdZip
+O3331222,2021-01-13,C1010398,NULL,"Jim Glussman","1432 E. Ravenna",Denver,CO,80111-0033
+O7847172,2021-01-23,C9943201,NULL,"Harry Sanders","1280 S. Hill Rd.",Fife,WA,98222-2258
+O8979495,2021-01-23,C9865874,NULL,HelenSibley,"206 McCaffrey",Renton,WA,98006-5543
