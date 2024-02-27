@@ -73,37 +73,34 @@ WHERE
     );
 
 /* Q6 */
-insert into
-    employee (
-        EmpNo,
-        EmpFirstName,
-        EmpLastName,
-        EmpPhone,
-        EmpEMail,
-        SupEmpNo,
-        EmpCommRate
-    )
-values
-    (
-        "abcdefg",
-        "Benjamin",
-        "Farias Dela Mora",
-        "509-792-4736",
-        "b.fariasdelamora@pnnl.gov",
-        (
-            SELECT
-                EmpNo
-            FROM
-                employee
-            WHERE
-                EmpFirstName = 'Amy'
-                AND EmpLastName = 'Tang'
-        ),
-        50.0
-    );
+INSERT INTO employee (
+    EmpNo,
+    EmpFirstName,
+    EmpLastName,
+    EmpPhone,
+    EmpEMail,
+    SupEmpNo,
+    EmpCommRate
+)
+SELECT
+    'abcdefg',
+    'Benjamin',
+    'Farias Dela Mora',
+    '509-792-4736',
+    'b.fariasdelamora@pnnl.gov',
+    EmpNo,
+    0.120
+FROM
+    employee
+WHERE
+    EmpFirstName = 'Amy'
+    AND EmpLastName = 'Tang';
+
 
 /* Q7 */
-DELETE FROM employee
+DELETE FROM employee 
 WHERE
     EmpFirstName = 'Benjamin'
-    AND EmpLastName = 'Farias Dela Mora';
+    AND EmpLastName = 'Farias Dela Mora'
+    AND EmpNo = 'abcdefg'
+;
