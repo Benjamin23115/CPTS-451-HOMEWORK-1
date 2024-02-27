@@ -7,10 +7,6 @@ SQL system: MySQL and Workbench
 Operating System: MS Windows 
 ----------------------------------------*/
 use wsutc_cpts451_orderentry;
-use wsutc_cpts451_university;
-use cpts451_university_wsu;
-
-
 /* Q1 */
 select
     *
@@ -124,6 +120,9 @@ WHERE
     AND EmpLastName = 'Farias Dela Mora'
     AND EmpNo = 'abcdefg'
 ;
+
+
+use wsutc_cpts451_university;
 
 -- Q8
 
@@ -252,6 +251,8 @@ DELETE FROM faculty
 WHERE
     FacFirstName = 'Benjamin'
     AND FacLastName = 'Farias Dela Mora';
+
+use cpts451_university_wsu;
 
  -- Q15
  SELECT 
