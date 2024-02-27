@@ -24,17 +24,21 @@ where
     and OrdState = 'WA';
 
 /* Q3 */
-SELECT distinct
+SELECT DISTINCT
     employee.EmpFirstName,
     employee.EmpLastName,
     employee.EmpNo,
     employee.EmpPhone
 FROM
     employee
-    JOIN ordertbl ON employee.EmpNo = ordertbl.EmpNo
-    JOIN customer ON customer.CustNo = ordertbl.CustNo
+        JOIN
+    ordertbl ON employee.EmpNo = ordertbl.EmpNo
+        JOIN
+    customer ON customer.CustNo = ordertbl.CustNo
 WHERE
-    customer.CustBal > 300;
+    customer.CustBal > 300
+        AND ordertbl.OrdDate >= '2021-01-01'
+        AND ordertbl.OrdDate <= '2021-01-31';
 
 /* Q4 */
 SELECT

@@ -1,14 +1,11 @@
 use wsutc_cpts451_university;
 -- Q8
 
-SELECT distinct
+SELECT DISTINCT
     student.StdFirstName,
     student.StdLastName,
     student.StdMajor,
-    student.StdClass,
-    student.StdGPA,
-    student.StdNo,
-    offering.OffYear
+    student.StdClass
 FROM
     student
         JOIN
@@ -16,29 +13,30 @@ FROM
         JOIN
     offering ON offering.OfferNo = enrollment.OfferNo
 WHERE
-    student.StdGPA >= 3.5 and offering.OffYear < 2020;
+    student.StdGPA >= 3.5
+        AND offering.OffYear < 2020;
     
 -- Q9
 
 SELECT 
-    faculty.FacFirstName,
-    faculty.FacLastName,
-    faculty.FacSupervisor,
-    faculty.FacNo,
-    course.CourseNo
+    faculty.FacFirstName AS facultyFirstName,
+    faculty.FacLastName AS facultyLastName,
+    supervisor.FacFirstName AS supervisorFirstName,
+    supervisor.FacLastName AS supervisorLastName
 FROM
-    faculty
-        JOIN
-    offering ON offering.FacNo = faculty.FacNo
-        JOIN
-    course ON course.CourseNo = offering.CourseNo
+    faculty faculty
+    JOIN offering offering ON faculty.FacNo = offering.FacNo
+    JOIN course ON course.CourseNo = offering.CourseNo
+    LEFT JOIN faculty supervisor ON faculty.FacSupervisor = supervisor.FacNo
 WHERE
-    OffYear = 2020 and course.CourseNo like 'IS%';
+    offering.OffYear = 2020 
+    AND course.CourseNo LIKE 'IS%';
+
     
 -- Q10 
 
 SELECT 
-    COUNT(student.StdNo) AS totalStudentsEnrolled,
+    COUNT(DISTINCT offering.OfferNo) AS totalOfferings,
     offering.CourseNo
 FROM
     student
@@ -69,6 +67,9 @@ SELECT
     student.StdFirstName,
     student.StdLastName,
     offering.CourseNo,
+    offering.OffTerm,
+    offering.OffYear,
+    offering.OffTime,
     course.CrsUnits,
     faculty.FacFirstName AS InstructorFirstName,
     faculty.FacLastName AS InstructorLastName

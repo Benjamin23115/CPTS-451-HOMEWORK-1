@@ -14,8 +14,7 @@ FROM
         JOIN
     course ON course.CourseNo = offering.CourseNo
 WHERE
-    student.StdClass = 'SR'
-        AND course.CourseNo LIKE 'CS%'
+    course.CourseNo LIKE 'CS4%'
         AND offering.OffTerm = 'Summer'
         AND offering.OffYear = 2022
 GROUP BY course.CourseNo , offering.OfferNo
