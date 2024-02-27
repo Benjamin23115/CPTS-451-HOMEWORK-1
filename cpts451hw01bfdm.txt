@@ -7,6 +7,8 @@ SQL system: MySQL and Workbench
 Operating System: MS Windows 
 ----------------------------------------*/
 use wsutc_cpts451_orderentry;
+use wsutc_cpts451_university;
+use cpts451_university_wsu;
 
 
 /* Q1 */
@@ -58,3 +60,330 @@ WHERE
 GROUP BY
     shortCustZip,
     CustCity;
+
+/* Q5 */
+SELECT
+    customer.CustNo,
+    customer.CustFirstName,
+    customer.CustLastName,
+    SUM(ordline.Qty) AS totalQuantityOrdered,
+    SUM(ordline.Qty * product.ProdPrice) AS totalOrderAmount
+FROM
+    customer
+    JOIN ordertbl ON ordertbl.CustNo = customer.CustNo
+    JOIN ordline ON ordertbl.OrdNo = ordline.OrdNo
+    JOIN product ON ordline.ProdNo = product.ProdNo
+WHERE
+    ordertbl.OrdDate >= '2021-01-01'
+    AND ordertbl.OrdDate <= '2021-01-31'
+    AND (
+        product.ProdName LIKE '%Ink Jet%'
+        OR product.ProdName LIKE '%Laser%'
+    )
+GROUP BY
+    customer.CustNo,
+    customer.CustFirstName,
+    customer.CustLastName
+HAVING
+    SUM(CASE WHEN product.ProdName LIKE '%Ink Jet%' OR product.ProdName LIKE '%Laser%' THEN 1 ELSE 0 END) > 2;
+
+
+/* Q6 */
+INSERT INTO employee (
+    EmpNo,
+    EmpFirstName,
+    EmpLastName,
+    EmpPhone,
+    EmpEMail,
+    SupEmpNo,
+    EmpCommRate
+)
+SELECT
+    'abcdefg',
+    'Benjamin',
+    'Farias Dela Mora',
+    '509-792-4736',
+    'b.fariasdelamora@pnnl.gov',
+    EmpNo,
+    0.120
+FROM
+    employee
+WHERE
+    EmpFirstName = 'Amy'
+    AND EmpLastName = 'Tang';
+
+
+/* Q7 */
+DELETE FROM employee 
+WHERE
+    EmpFirstName = 'Benjamin'
+    AND EmpLastName = 'Farias Dela Mora'
+    AND EmpNo = 'abcdefg'
+;
+
+SELECT distinct
+    student.StdFirstName,
+    student.StdLastName,
+    student.StdMajor,
+    student.StdClass,
+    student.StdGPA,
+    student.StdNo,
+    offering.OffYear
+FROM
+    student
+        JOIN
+    enrollment ON enrollment.StdNo = student.StdNo
+        JOIN
+    offering ON offering.OfferNo = enrollment.OfferNo
+WHERE
+    student.StdGPA >= 3.5 and offering.OffYear < 2020;
+    
+-- Q9
+
+SELECT 
+    faculty.FacFirstName,
+    faculty.FacLastName,
+    faculty.FacSupervisor,
+    faculty.FacNo,
+    course.CourseNo
+FROM
+    faculty
+        JOIN
+    offering ON offering.FacNo = faculty.FacNo
+        JOIN
+    course ON course.CourseNo = offering.CourseNo
+WHERE
+    OffYear = 2020 and course.CourseNo like 'IS%';
+    
+-- Q10 
+
+SELECT 
+    COUNT(student.StdNo) AS totalStudentsEnrolled,
+    offering.CourseNo
+FROM
+    student
+        JOIN
+    enrollment ON enrollment.StdNo = student.StdNo
+        JOIN
+    offering ON offering.OfferNo = enrollment.OfferNo
+WHERE
+    offering.OffDays = 'MW'
+GROUP BY offering.CourseNo;
+
+-- Q11
+
+SELECT DISTINCT
+    student.StdFirstName,
+    student.StdLastName,
+    StdMajor,
+    StdClass,
+    COUNT(enrollment.OfferNo) AS totalNumberEnrolledOfferings
+FROM
+    student
+        JOIN
+    enrollment ON enrollment.StdNo = student.StdNo
+GROUP BY student.StdFirstName , student.StdLastName , student.StdMajor , student.StdClass;
+
+-- Q12
+SELECT 
+    student.StdFirstName,
+    student.StdLastName,
+    offering.CourseNo,
+    course.CrsUnits,
+    faculty.FacFirstName AS InstructorFirstName,
+    faculty.FacLastName AS InstructorLastName
+FROM
+    student
+        JOIN
+    enrollment ON enrollment.StdNo = student.StdNo
+        JOIN
+    offering ON offering.OfferNo = enrollment.OfferNo
+        JOIN
+    faculty ON faculty.FacNo = offering.FacNo
+        JOIN
+    course ON course.CourseNo = offering.CourseNo
+        JOIN
+    wsutc_cpts451_orderentry.customer AS customer ON (customer.CustFirstName = student.StdFirstName
+        AND customer.CustLastName = student.StdLastName)
+WHERE
+    student.StdMajor = 'ACCT'
+        AND offering.CourseNo LIKE '%IS%'; 
+    
+-- Q13
+INSERT INTO faculty (
+    FacNo,
+    FacFirstName,
+    FacLastName,
+    FacCity,
+    FacState,
+    FacZipCode,
+    FacRank,
+    FacHireDate,
+    FacSalary,
+    FacSupervisor,
+    FacDept
+) 
+VALUES (
+    "123456789",
+    "Benjamin",
+    "Farias Dela Mora",
+    "Pasco",
+    "WA",
+    "99301",
+    "JR",
+    "2024-02-23",
+    70000,
+    (SELECT FacNo FROM (SELECT * FROM faculty) AS temp WHERE FacFirstName = 'Nicki' AND FacLastName = 'Macon' AND FacNo = '765-43-2109'),
+    "ACCT"
+);
+
+-- Q14
+
+DELETE FROM faculty 
+WHERE
+    FacFirstName = 'Benjamin'
+    AND FacLastName = 'Farias Dela Mora';
+
+ -- Q15
+ SELECT 
+    AVG(student.StdGPA) AS avgStudentGPA,
+    course.CourseNo,
+    offering.OfferNo
+FROM
+    enrollment
+        JOIN
+    student ON student.StdNo = enrollment.StdNo
+        JOIN
+    offering ON offering.OfferNo = enrollment.OfferNo
+        JOIN
+    course ON course.CourseNo = offering.CourseNo
+WHERE
+    student.StdClass = 'SR'
+        AND course.CourseNo LIKE 'CS%'
+        AND offering.OffTerm = 'Summer'
+        AND offering.OffYear = 2022
+GROUP BY course.CourseNo , offering.OfferNo
+ORDER BY course.CourseNo ASC;
+
+-- Q16
+SELECT 
+    student.StdFirstName,
+    student.StdLastName,
+    enrollment.StdNo,
+    COUNT(*) AS gradesAboveNumber
+FROM
+    enrollment
+        JOIN
+    student ON student.StdNo = enrollment.StdNo
+WHERE
+    enrollment.EnrGrade >= 3.7
+GROUP BY student.StdFirstName , student.StdLastName , enrollment.StdNo
+HAVING COUNT(*) > 1;
+
+-- Q17
+SELECT 
+    faculty1.FacNo AS FacultyID,
+    faculty1.FacLastName AS FacultyLastName,
+    faculty1.FacSalary AS FacultySalary
+FROM
+    faculty faculty1
+        JOIN
+    faculty faculty2 ON faculty1.FacSupervisor = faculty2.FacNo
+WHERE
+    faculty1.FacSalary > faculty2.FacSalary;
+
+-- Q18
+SELECT 
+    faculty.FacFirstName,
+    faculty.FacLastName,
+    offering.OfferNo,
+    offering.CourseNo,
+    course.CrsDesc,
+    AVG(student.StdGPA) AS avgStudentGPA,
+    COUNT(enrollment.StdNo) AS enrollmentCount
+FROM
+    enrollment
+        JOIN
+    offering ON enrollment.OfferNo = offering.OfferNo
+        JOIN
+    faculty ON offering.FacNo = faculty.FacNo
+        JOIN
+    course ON offering.CourseNo = course.CourseNo
+        JOIN
+    student ON enrollment.StdNo = student.StdNo
+WHERE
+    OffYear = 2022
+GROUP BY faculty.FacFirstName , faculty.FacLastName , offering.OfferNo , offering.CourseNo , course.CrsDesc
+HAVING enrollmentCount > 2
+ORDER BY avgStudentGPA DESC;
+
+-- Q19
+SELECT 
+    offering.OfferNo,
+    offering.CourseNo,
+    offering.OffDays,
+    offering.OffTime,
+    offering.OffLocation,
+    faculty.FacFirstName,
+    faculty.FacLastName
+FROM
+    offering
+        JOIN
+    enrollment ON enrollment.OfferNo = offering.OfferNo
+        JOIN
+    student ON student.StdNo = enrollment.StdNo
+        JOIN
+    faculty ON faculty.FacNo = offering.FacNo
+WHERE
+    offering.OffYear = 2022
+        AND offering.OffTerm = 'Summer'
+        AND student.StdFirstName = 'Dan'
+        AND student.StdLastName = 'Debroeck';
+
+CREATE DATABASE IF NOT EXISTS CptS451_VetClinic_bfdm;
+
+USE CptS451_VetClinic_bfdm;
+
+CREATE TABLE IF NOT EXISTS Owner (
+    OwnerID VARCHAR(255) PRIMARY KEY,
+    OwnerFirstName VARCHAR(20),
+    OwnerLastName VARCHAR(20),
+    OwnerAddress VARCHAR(40),
+    OwnerCity VARCHAR(176),
+    OwnerState VARCHAR(2),
+    OwnerZipCode VARCHAR(10),
+    OwnerPhone VARCHAR(17)
+);
+
+CREATE TABLE IF NOT EXISTS Patient (
+    PatientID INT AUTO_INCREMENT PRIMARY KEY,
+        FOREIGN KEY (PatientOwnerID)
+        REFERENCES Owner (OwnerID),
+    PatientOwnerID VARCHAR(255),
+    PatientName VARCHAR(20),
+    PatientSpecies VARCHAR(15),
+    PatientGender VARCHAR(1),
+    PatientBirthDate VARCHAR(10),
+    PatientNotes VARCHAR(255)
+);
+
+INSERT ignore INTO Owner (OwnerID, OwnerFirstName, OwnerLastName, OwnerAddress, OwnerCity, OwnerState, OwnerZipCode, OwnerPhone)
+values ("K-344a", "Georgette", "Smith", "157 Pine Tree Lane", "Beacon Hill", "TX", 78212, "555-568-7752");
+INSERT ignore INTO Owner (OwnerID, OwnerFirstName, OwnerLastName, OwnerAddress, OwnerCity, OwnerState, OwnerZipCode, OwnerPhone)
+values ("E-052x", "Jackson", "Guiles", "33 MacLaine Lane", "Dignowity Hill", "TX", 78202, "555-824-3351");
+INSERT ignore INTO Owner (OwnerID, OwnerFirstName, OwnerLastName, OwnerAddress, OwnerCity, OwnerState, OwnerZipCode, OwnerPhone)
+values ("F-011h", "Allison", "Jones", "99 Main Street", "Monte Vista", "TX", 78212, "555-336-8843");
+INSERT ignore INTO Owner (OwnerID, OwnerFirstName, OwnerLastName, OwnerAddress, OwnerCity, OwnerState, OwnerZipCode, OwnerPhone)
+values ("K-344a", "Georgette", "Smith", "157 Pine Tree Lane", "Beacon Hill", "TX", 78212, "555-568-7752");
+
+insert ignore into Patient (PatientID, PatientOwnerID, PatientName, PatientSpecies, PatientGender, PatientBirthDate, PatientNotes)
+values (0113, "K-344a", "Jacqueline of the Marsh", "Canine", "F", "2016-12-02", "Golden Labrador");
+
+insert ignore into Patient (PatientID, PatientOwnerID, PatientName, PatientSpecies, PatientGender, PatientBirthDate, PatientNotes)
+values (2857, "E-052x", "Slick", "Equine", "M", "2019-08-29", "Hanoverian, Black");
+
+insert ignore into Patient (PatientID, PatientOwnerID, PatientName, PatientSpecies, PatientGender, PatientBirthDate, PatientNotes)
+values (1512, "F-011h", "Fluffy", "Reptilia", "F", "2020-01-27", "Banded Gila Monster");
+
+insert ignore into Patient (PatientID, PatientOwnerID, PatientName, PatientSpecies, PatientGender, PatientBirthDate, PatientNotes)
+values (6548, "K-344a", "Mr. Spiffy Pants", "Feline", "M", "2017-05-22", "Black & White, short hair, Manx");

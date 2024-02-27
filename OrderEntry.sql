@@ -55,9 +55,8 @@ SELECT
     customer.CustNo,
     customer.CustFirstName,
     customer.CustLastName,
-    (ordline.Qty * product.ProdPrice) AS totalOrderAmount,
-    ordline.Qty,
-    product.ProdName
+    SUM(ordline.Qty) AS totalQuantityOrdered,
+    SUM(ordline.Qty * product.ProdPrice) AS totalOrderAmount
 FROM
     customer
     JOIN ordertbl ON ordertbl.CustNo = customer.CustNo
@@ -66,11 +65,17 @@ FROM
 WHERE
     ordertbl.OrdDate >= '2021-01-01'
     AND ordertbl.OrdDate <= '2021-01-31'
-    AND ordline.Qty > 2
     AND (
         product.ProdName LIKE '%Ink Jet%'
         OR product.ProdName LIKE '%Laser%'
-    );
+    )
+GROUP BY
+    customer.CustNo,
+    customer.CustFirstName,
+    customer.CustLastName
+HAVING
+    SUM(CASE WHEN product.ProdName LIKE '%Ink Jet%' OR product.ProdName LIKE '%Laser%' THEN 1 ELSE 0 END) > 2;
+
 
 /* Q6 */
 INSERT INTO employee (
